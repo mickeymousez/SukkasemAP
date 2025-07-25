@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>ระบบคิดค่าเช่าหอพัก</title>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
   <style>
     body {
       font-family: 'Kanit', sans-serif;
@@ -12,24 +13,19 @@
       padding: 40px;
     }
     .container {
-      max-width: 1000px;
+      max-width: 900px;
       margin: auto;
     }
     .form-grid {
       display: flex;
       gap: 20px;
       flex-wrap: wrap;
-      align-items: stretch;
     }
     .form-group {
-      flex: 1 1 48%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      flex: 1;
       background: #2c3e50;
       padding: 20px;
       border-radius: 12px;
-      box-sizing: border-box;
     }
     label {
       display: block;
@@ -122,24 +118,23 @@
       </div>
 
       <div class="form-group">
-        <div>
-          <div class="section-box">
-            <div class="section-title">🚿 ค่าน้ำประปา</div>
-            <div class="inline-grid">
-              <div>
-                <label>เลขมิเตอร์ (ครั้งก่อน):</label>
-                <input type="number" id="waterPrev" placeholder="เช่น 320">
-              </div>
-              <div>
-                <label>เลขมิเตอร์ (ปัจจุบัน):</label>
-                <input type="number" id="waterCurr" placeholder="เช่น 330">
-              </div>
+        <div class="section-box">
+          <div class="section-title">🚿 ค่าน้ำประปา</div>
+          <div class="inline-grid">
+            <div>
+              <label>เลขมิเตอร์ (ครั้งก่อน):</label>
+              <input type="number" id="waterPrev" placeholder="เช่น 320">
             </div>
-            <label>ราคาต่อหน่วย (บาท):</label>
-            <input type="number" id="waterRate" value="18">
+            <div>
+              <label>เลขมิเตอร์ (ปัจจุบัน):</label>
+              <input type="number" id="waterCurr" placeholder="เช่น 330">
+            </div>
           </div>
-          <button onclick="calculate()">📊 คำนวณค่าเช่า</button>
+          <label>ราคาต่อหน่วย (บาท):</label>
+          <input type="number" id="waterRate" value="18">
         </div>
+
+        <button onclick="calculate()">📊 คำนวณค่าเช่า</button>
       </div>
     </div>
 
