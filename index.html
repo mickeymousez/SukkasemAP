@@ -33,6 +33,7 @@
     }
     input {
       width: 100%;
+      box-sizing: border-box;
       padding: 10px;
       font-size: 16px;
       border-radius: 6px;
@@ -47,9 +48,11 @@
     .inline-grid {
       display: flex;
       gap: 10px;
+      flex-wrap: wrap;
     }
     .inline-grid > div {
-      flex: 1;
+      flex: 1 1 0;
+      min-width: 0;
     }
     .section-box {
       margin-top: 20px;
@@ -79,6 +82,11 @@
       padding: 20px;
       border-radius: 10px;
     }
+    @media (max-width: 600px) {
+      .inline-grid {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 <body>
@@ -104,11 +112,11 @@
           <div class="section-title">🔌 ค่าไฟฟ้า</div>
           <div class="inline-grid">
             <div>
-              <label>เลขมิเตอร์ (ครั้งก่อน):</label>
+              <label>เลขไฟฟ้าครั้งก่อน:</label>
               <input type="number" id="elecPrev" placeholder="เช่น 1250">
             </div>
             <div>
-              <label>เลขมิเตอร์ (ปัจจุบัน):</label>
+              <label>เลขไฟฟ้าปัจจุบัน:</label>
               <input type="number" id="elecCurr" placeholder="เช่น 1310">
             </div>
           </div>
@@ -122,11 +130,11 @@
           <div class="section-title">🚿 ค่าน้ำประปา</div>
           <div class="inline-grid">
             <div>
-              <label>เลขมิเตอร์ (ครั้งก่อน):</label>
+              <label>เลขน้ำครั้งก่อน:</label>
               <input type="number" id="waterPrev" placeholder="เช่น 320">
             </div>
             <div>
-              <label>เลขมิเตอร์ (ปัจจุบัน):</label>
+              <label>เลขน้ำปัจจุบัน:</label>
               <input type="number" id="waterCurr" placeholder="เช่น 330">
             </div>
           </div>
@@ -135,36 +143,13 @@
         </div>
 
         <button onclick="calculate()">📊 คำนวณค่าเช่า</button>
+        <button onclick="submitToSheet()">📤 ส่งข้อมูลไป Google Sheet</button>
       </div>
     </div>
 
     <div id="result"></div>
   </div>
 
-  <script>
-    function calculate() {
-      const rent = parseFloat(document.getElementById('rent').value || 0);
-      const parking = parseFloat(document.getElementById('parking').value || 0);
-
-      const elecUsed = parseFloat(document.getElementById('elecCurr').value || 0) - parseFloat(document.getElementById('elecPrev').value || 0);
-      const elecRate = parseFloat(document.getElementById('elecRate').value || 0);
-      const elecTotal = elecUsed >= 0 ? elecUsed * elecRate : 0;
-
-      const waterUsed = parseFloat(document.getElementById('waterCurr').value || 0) - parseFloat(document.getElementById('waterPrev').value || 0);
-      const waterRate = parseFloat(document.getElementById('waterRate').value || 0);
-      const waterTotal = waterUsed >= 0 ? waterUsed * waterRate : 0;
-
-      const total = rent + parking + elecTotal + waterTotal;
-
-      document.getElementById('result').innerHTML = `
-        <b>📋 ใบสรุปรายการ</b><br><br>
-        ค่าเช่าห้อง: ${rent.toLocaleString()} บาท<br>
-        ${parking > 0 ? `ค่าจอดรถ: ${parking.toLocaleString()} บาท<br>` : ""}
-        ค่าไฟ (${elecUsed} หน่วย): ${elecTotal.toLocaleString()} บาท<br>
-        ค่าน้ำ (${waterUsed} หน่วย): ${waterTotal.toLocaleString()} บาท<br><br>
-        <b>💰 รวมทั้งสิ้น: ${total.toLocaleString()} บาท</b>
-      `;
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
