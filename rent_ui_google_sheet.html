@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>ระบบคิดค่าเช่าหอพัก</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Kanit', sans-serif;
+      background: #1e2a36;
+      color: white;
+      padding: 40px;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+    .form-grid {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .form-group {
+      flex: 1;
+      background: #2c3e50;
+      padding: 20px;
+      border-radius: 12px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #455a64;
+      background: #34495e;
+      color: white;
+    }
+    .note {
+      font-size: 13px;
+      color: #ccc;
+    }
+    .inline-grid {
+      display: flex;
+      gap: 10px;
+    }
+    .inline-grid > div {
+      flex: 1;
+    }
+    .section-box {
+      margin-top: 20px;
+      padding: 15px;
+      background: #1c2833;
+      border-radius: 10px;
+    }
+    .section-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #00bcd4;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background: #00bcd4;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 30px;
+      background: #263645;
+      padding: 20px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>💼 ระบบคิดค่าเช่าหอพัก</h2>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>ห้อง:</label>
+        <input id="room" placeholder="เช่น 101">
+
+        <label>ผู้เช่า:</label>
+        <input id="tenant" placeholder="เช่น คุณเอ">
+
+        <label>ค่าเช่าห้อง (บาท):</label>
+        <input type="number" id="rent">
+
+        <label>ค่าจอดรถ (ถ้ามี):</label>
+        <input type="number" id="parking" placeholder="ใส่ 0 ถ้าไม่มี">
+        <small class="note">* กรอกเฉพาะห้องที่มีค่าใช้จ่าย</small>
+
+        <div class="section-box">
+          <div class="section-title">🔌 ค่าไฟฟ้า</div>
+          <div class="inline-grid">
+            <div>
+              <label>เลขมิเตอร์ (ครั้งก่อน):</label>
+              <input type="number" id="elecPrev" placeholder="เช่น 1250">
+            </div>
+            <div>
+              <label>เลขมิเตอร์ (ปัจจุบัน):</label>
+              <input type="number" id="elecCurr" placeholder="เช่น 1310">
+            </div>
+          </div>
+          <label>ราคาต่อหน่วย (บาท):</label>
+          <input type="number" id="elecRate" value="8">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="section-box">
+          <div class="section-title">🚿 ค่าน้ำประปา</div>
+          <div class="inline-grid">
+            <div>
+              <label>เลขมิเตอร์ (ครั้งก่อน):</label>
+              <input type="number" id="waterPrev" placeholder="เช่น 320">
+            </div>
+            <div>
+              <label>เลขมิเตอร์ (ปัจจุบัน):</label>
+              <input type="number" id="waterCurr" placeholder="เช่น 330">
+            </div>
+          </div>
+          <label>ราคาต่อหน่วย (บาท):</label>
+          <input type="number" id="waterRate" value="18">
+        </div>
+
+        <button onclick="calculate()">📊 คำนวณค่าเช่า</button>
+        <button onclick="submitToSheet()">📤 ส่งข้อมูลไป Google Sheet</button>
+      </div>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+<script>
+  function calculate() {
+    const rent = parseFloat(document.getElementById('rent').value || 0);
+    const parking = parseFloat(document.getElementById('parking').value || 0);
+
+    const elecUsed = parseFloat(document.getElementById('elecCurr').value || 0) - parseFloat(document.getElementById('elecPrev').value || 0);
+    const elecRate = parseFloat(document.getElementById('elecRate').value || 0);
+    const elecTotal = elecUsed >= 0 ? elecUsed * elecRate : 0;
+
+    const waterUsed = parseFloat(document.getElementById('waterCurr').value || 0) - parseFloat(document.getElementById('waterPrev').value || 0);
+    const waterRate = parseFloat(document.getElementById('waterRate').value || 0);
+    const waterTotal = waterUsed >= 0 ? waterUsed * waterRate : 0;
+
+    const total = rent + parking + elecTotal + waterTotal;
+
+    document.getElementById('result').innerHTML = `
+      <b>📋 ใบสรุปรายการ</b><br><br>
+      ค่าเช่าห้อง: ${rent.toLocaleString()} บาท<br>
+      ${parking > 0 ? `ค่าจอดรถ: ${parking.toLocaleString()} บาท<br>` : ""}
+      ค่าไฟ (${elecUsed} หน่วย): ${elecTotal.toLocaleString()} บาท<br>
+      ค่าน้ำ (${waterUsed} หน่วย): ${waterTotal.toLocaleString()} บาท<br><br>
+      <b>💰 รวมทั้งสิ้น: ${total.toLocaleString()} บาท</b>
+    `;
+  }
+
+  function submitToSheet() {
+    const data = {
+      room: document.getElementById('room').value,
+      tenant: document.getElementById('tenant').value,
+      rent: parseFloat(document.getElementById('rent').value || 0),
+      parking: parseFloat(document.getElementById('parking').value || 0),
+      elecUsed: parseFloat(document.getElementById('elecCurr').value || 0) - parseFloat(document.getElementById('elecPrev').value || 0),
+      waterUsed: parseFloat(document.getElementById('waterCurr').value || 0) - parseFloat(document.getElementById('waterPrev').value || 0),
+      elecTotal: (parseFloat(document.getElementById('elecCurr').value || 0) - parseFloat(document.getElementById('elecPrev').value || 0)) * parseFloat(document.getElementById('elecRate').value || 0),
+      waterTotal: (parseFloat(document.getElementById('waterCurr').value || 0) - parseFloat(document.getElementById('waterPrev').value || 0)) * parseFloat(document.getElementById('waterRate').value || 0)
+    };
+    data.total = data.rent + data.parking + data.elecTotal + data.waterTotal;
+
+    if (!data.room || !data.tenant) {
+      alert("⚠️ กรุณากรอกข้อมูลห้องและชื่อผู้เช่าให้ครบ");
+      return;
+    }
+
+    const scriptURL = "https://script.google.com/macros/s/AKfycbyhibghgW2y9I3y4Ee6uvowei9_uSWnWg2xQUtP_RDBM7iAkR7JrSjeQFnGLIwUgzeI/exec";
+    fetch(scriptURL, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: { 'Content-Type': 'application/json' }
+    }).then(res => res.text()).then(res => {
+      alert("✅ ส่งข้อมูลสำเร็จ");
+    }).catch(err => {
+      alert("❌ ส่งข้อมูลล้มเหลว");
+      console.error(err);
+    });
+  }
+</script>
+
+</body>
+</html>
