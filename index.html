@@ -12,19 +12,24 @@
       padding: 40px;
     }
     .container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: auto;
     }
     .form-grid {
       display: flex;
       gap: 20px;
       flex-wrap: wrap;
+      align-items: stretch;
     }
     .form-group {
-      flex: 1;
+      flex: 1 1 48%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       background: #2c3e50;
       padding: 20px;
       border-radius: 12px;
+      box-sizing: border-box;
     }
     label {
       display: block;
@@ -117,23 +122,24 @@
       </div>
 
       <div class="form-group">
-        <div class="section-box">
-          <div class="section-title">🚿 ค่าน้ำประปา</div>
-          <div class="inline-grid">
-            <div>
-              <label>เลขมิเตอร์ (ครั้งก่อน):</label>
-              <input type="number" id="waterPrev" placeholder="เช่น 320">
+        <div>
+          <div class="section-box">
+            <div class="section-title">🚿 ค่าน้ำประปา</div>
+            <div class="inline-grid">
+              <div>
+                <label>เลขมิเตอร์ (ครั้งก่อน):</label>
+                <input type="number" id="waterPrev" placeholder="เช่น 320">
+              </div>
+              <div>
+                <label>เลขมิเตอร์ (ปัจจุบัน):</label>
+                <input type="number" id="waterCurr" placeholder="เช่น 330">
+              </div>
             </div>
-            <div>
-              <label>เลขมิเตอร์ (ปัจจุบัน):</label>
-              <input type="number" id="waterCurr" placeholder="เช่น 330">
-            </div>
+            <label>ราคาต่อหน่วย (บาท):</label>
+            <input type="number" id="waterRate" value="18">
           </div>
-          <label>ราคาต่อหน่วย (บาท):</label>
-          <input type="number" id="waterRate" value="18">
+          <button onclick="calculate()">📊 คำนวณค่าเช่า</button>
         </div>
-
-        <button onclick="calculate()">📊 คำนวณค่าเช่า</button>
       </div>
     </div>
 
@@ -157,8 +163,6 @@
 
       document.getElementById('result').innerHTML = `
         <b>📋 ใบสรุปรายการ</b><br><br>
-        ห้อง: ${document.getElementById('room').value}<br>
-        ผู้เช่า: ${document.getElementById('tenant').value}<br><br>
         ค่าเช่าห้อง: ${rent.toLocaleString()} บาท<br>
         ${parking > 0 ? `ค่าจอดรถ: ${parking.toLocaleString()} บาท<br>` : ""}
         ค่าไฟ (${elecUsed} หน่วย): ${elecTotal.toLocaleString()} บาท<br>
