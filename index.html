@@ -134,7 +134,6 @@
         </div>
 
         <button onclick="calculate()">📊 คำนวณค่าเช่า</button>
-        <button onclick="submitToSheet()">📤 ส่งข้อมูลไป Google Sheet</button>
       </div>
     </div>
 
@@ -158,43 +157,14 @@
 
       document.getElementById('result').innerHTML = `
         <b>📋 ใบสรุปรายการ</b><br><br>
+        ห้อง: ${document.getElementById('room').value}<br>
+        ผู้เช่า: ${document.getElementById('tenant').value}<br><br>
         ค่าเช่าห้อง: ${rent.toLocaleString()} บาท<br>
         ${parking > 0 ? `ค่าจอดรถ: ${parking.toLocaleString()} บาท<br>` : ""}
         ค่าไฟ (${elecUsed} หน่วย): ${elecTotal.toLocaleString()} บาท<br>
         ค่าน้ำ (${waterUsed} หน่วย): ${waterTotal.toLocaleString()} บาท<br><br>
         <b>💰 รวมทั้งสิ้น: ${total.toLocaleString()} บาท</b>
       `;
-    }
-
-    function submitToSheet() {
-      const data = {
-        room: document.getElementById('room').value,
-        tenant: document.getElementById('tenant').value,
-        rent: parseFloat(document.getElementById('rent').value || 0),
-        parking: parseFloat(document.getElementById('parking').value || 0),
-        elecUsed: parseFloat(document.getElementById('elecCurr').value || 0) - parseFloat(document.getElementById('elecPrev').value || 0),
-        waterUsed: parseFloat(document.getElementById('waterCurr').value || 0) - parseFloat(document.getElementById('waterPrev').value || 0),
-        elecTotal: (parseFloat(document.getElementById('elecCurr').value || 0) - parseFloat(document.getElementById('elecPrev').value || 0)) * parseFloat(document.getElementById('elecRate').value || 0),
-        waterTotal: (parseFloat(document.getElementById('waterCurr').value || 0) - parseFloat(document.getElementById('waterPrev').value || 0)) * parseFloat(document.getElementById('waterRate').value || 0)
-      };
-      data.total = data.rent + data.parking + data.elecTotal + data.waterTotal;
-
-      if (!data.room || !data.tenant) {
-        alert("⚠️ กรุณากรอกข้อมูลห้องและชื่อผู้เช่าให้ครบ");
-        return;
-      }
-
-      const scriptURL = "https://script.google.com/macros/s/AKfycbwDRWYEk4iR_A6rsfOQg830j7mGLZaAj1KyAS-sLl8MPOgXgKSyjrdgbPuJ-qbq4W9U/exec";
-      fetch(scriptURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      }).then(res => res.text()).then(res => {
-        alert("✅ ส่งข้อมูลสำเร็จ");
-      }).catch(err => {
-        alert("❌ ส่งข้อมูลล้มเหลว");
-        console.error(err);
-      });
     }
   </script>
 </body>
