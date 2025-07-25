@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>ระบบคิดค่าเช่าหอพัก</title>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
   <style>
     body {
       font-family: 'Kanit', sans-serif;
@@ -85,19 +84,19 @@
   <div class="container">
     <h2>💼 ระบบคิดค่าเช่าหอพัก</h2>
 
-    <form class="form-grid" action="https://script.google.com/macros/s/AKfycbwDRWYEk4iR_A6rsfOQg830j7mGLZaAj1KyAS-sLl8MPOgXgKSyjrdgbPuJ-qbq4W9U/exec" method="POST" target="_blank">
+    <div class="form-grid">
       <div class="form-group">
         <label>ห้อง:</label>
-        <input name="room" required placeholder="เช่น 101">
+        <input id="room" placeholder="เช่น 101">
 
         <label>ผู้เช่า:</label>
-        <input name="tenant" required placeholder="เช่น คุณเอ">
+        <input id="tenant" placeholder="เช่น คุณเอ">
 
         <label>ค่าเช่าห้อง (บาท):</label>
-        <input type="number" name="rent">
+        <input type="number" id="rent">
 
         <label>ค่าจอดรถ (ถ้ามี):</label>
-        <input type="number" name="parking" placeholder="ใส่ 0 ถ้าไม่มี">
+        <input type="number" id="parking" placeholder="ใส่ 0 ถ้าไม่มี">
         <small class="note">* กรอกเฉพาะห้องที่มีค่าใช้จ่าย</small>
 
         <div class="section-box">
@@ -105,15 +104,15 @@
           <div class="inline-grid">
             <div>
               <label>เลขมิเตอร์ (ครั้งก่อน):</label>
-              <input type="number" name="elecPrev" placeholder="เช่น 1250">
+              <input type="number" id="elecPrev" placeholder="เช่น 1250">
             </div>
             <div>
               <label>เลขมิเตอร์ (ปัจจุบัน):</label>
-              <input type="number" name="elecCurr" placeholder="เช่น 1310">
+              <input type="number" id="elecCurr" placeholder="เช่น 1310">
             </div>
           </div>
           <label>ราคาต่อหน่วย (บาท):</label>
-          <input type="number" name="elecRate" value="8">
+          <input type="number" id="elecRate" value="8">
         </div>
       </div>
 
@@ -123,50 +122,80 @@
           <div class="inline-grid">
             <div>
               <label>เลขมิเตอร์ (ครั้งก่อน):</label>
-              <input type="number" name="waterPrev" placeholder="เช่น 320">
+              <input type="number" id="waterPrev" placeholder="เช่น 320">
             </div>
             <div>
               <label>เลขมิเตอร์ (ปัจจุบัน):</label>
-              <input type="number" name="waterCurr" placeholder="เช่น 330">
+              <input type="number" id="waterCurr" placeholder="เช่น 330">
             </div>
           </div>
           <label>ราคาต่อหน่วย (บาท):</label>
-          <input type="number" name="waterRate" value="18">
+          <input type="number" id="waterRate" value="18">
         </div>
 
-        <button type="button" onclick="calculate()">📊 คำนวณค่าเช่า</button>
-        <button type="submit">📤 ส่งข้อมูลไป Google Sheet</button>
+        <button onclick="calculate()">📊 คำนวณค่าเช่า</button>
+        <button onclick="submitToSheet()">📤 ส่งข้อมูลไป Google Sheet</button>
       </div>
-    </form>
+    </div>
 
     <div id="result"></div>
   </div>
 
-<script>
-  function calculate() {
-    const rent = parseFloat(document.querySelector('[name="rent"]').value || 0);
-    const parking = parseFloat(document.querySelector('[name="parking"]').value || 0);
+  <script>
+    function calculate() {
+      const rent = parseFloat(document.getElementById('rent').value || 0);
+      const parking = parseFloat(document.getElementById('parking').value || 0);
 
-    const elecUsed = parseFloat(document.querySelector('[name="elecCurr"]').value || 0) - parseFloat(document.querySelector('[name="elecPrev"]').value || 0);
-    const elecRate = parseFloat(document.querySelector('[name="elecRate"]').value || 0);
-    const elecTotal = elecUsed >= 0 ? elecUsed * elecRate : 0;
+      const elecUsed = parseFloat(document.getElementById('elecCurr').value || 0) - parseFloat(document.getElementById('elecPrev').value || 0);
+      const elecRate = parseFloat(document.getElementById('elecRate').value || 0);
+      const elecTotal = elecUsed >= 0 ? elecUsed * elecRate : 0;
 
-    const waterUsed = parseFloat(document.querySelector('[name="waterCurr"]').value || 0) - parseFloat(document.querySelector('[name="waterPrev"]').value || 0);
-    const waterRate = parseFloat(document.querySelector('[name="waterRate"]').value || 0);
-    const waterTotal = waterUsed >= 0 ? waterUsed * waterRate : 0;
+      const waterUsed = parseFloat(document.getElementById('waterCurr').value || 0) - parseFloat(document.getElementById('waterPrev').value || 0);
+      const waterRate = parseFloat(document.getElementById('waterRate').value || 0);
+      const waterTotal = waterUsed >= 0 ? waterUsed * waterRate : 0;
 
-    const total = rent + parking + elecTotal + waterTotal;
+      const total = rent + parking + elecTotal + waterTotal;
 
-    document.getElementById('result').innerHTML = `
-      <b>📋 ใบสรุปรายการ</b><br><br>
-      ค่าเช่าห้อง: ${rent.toLocaleString()} บาท<br>
-      ${parking > 0 ? `ค่าจอดรถ: ${parking.toLocaleString()} บาท<br>` : ""}
-      ค่าไฟ (${elecUsed} หน่วย): ${elecTotal.toLocaleString()} บาท<br>
-      ค่าน้ำ (${waterUsed} หน่วย): ${waterTotal.toLocaleString()} บาท<br><br>
-      <b>💰 รวมทั้งสิ้น: ${total.toLocaleString()} บาท</b>
-    `;
-  }
-</script>
+      document.getElementById('result').innerHTML = `
+        <b>📋 ใบสรุปรายการ</b><br><br>
+        ค่าเช่าห้อง: ${rent.toLocaleString()} บาท<br>
+        ${parking > 0 ? `ค่าจอดรถ: ${parking.toLocaleString()} บาท<br>` : ""}
+        ค่าไฟ (${elecUsed} หน่วย): ${elecTotal.toLocaleString()} บาท<br>
+        ค่าน้ำ (${waterUsed} หน่วย): ${waterTotal.toLocaleString()} บาท<br><br>
+        <b>💰 รวมทั้งสิ้น: ${total.toLocaleString()} บาท</b>
+      `;
+    }
 
+    function submitToSheet() {
+      const data = {
+        room: document.getElementById('room').value,
+        tenant: document.getElementById('tenant').value,
+        rent: parseFloat(document.getElementById('rent').value || 0),
+        parking: parseFloat(document.getElementById('parking').value || 0),
+        elecUsed: parseFloat(document.getElementById('elecCurr').value || 0) - parseFloat(document.getElementById('elecPrev').value || 0),
+        waterUsed: parseFloat(document.getElementById('waterCurr').value || 0) - parseFloat(document.getElementById('waterPrev').value || 0),
+        elecTotal: (parseFloat(document.getElementById('elecCurr').value || 0) - parseFloat(document.getElementById('elecPrev').value || 0)) * parseFloat(document.getElementById('elecRate').value || 0),
+        waterTotal: (parseFloat(document.getElementById('waterCurr').value || 0) - parseFloat(document.getElementById('waterPrev').value || 0)) * parseFloat(document.getElementById('waterRate').value || 0)
+      };
+      data.total = data.rent + data.parking + data.elecTotal + data.waterTotal;
+
+      if (!data.room || !data.tenant) {
+        alert("⚠️ กรุณากรอกข้อมูลห้องและชื่อผู้เช่าให้ครบ");
+        return;
+      }
+
+      const scriptURL = "https://script.google.com/macros/s/AKfycbwDRWYEk4iR_A6rsfOQg830j7mGLZaAj1KyAS-sLl8MPOgXgKSyjrdgbPuJ-qbq4W9U/exec";
+      fetch(scriptURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).then(res => res.text()).then(res => {
+        alert("✅ ส่งข้อมูลสำเร็จ");
+      }).catch(err => {
+        alert("❌ ส่งข้อมูลล้มเหลว");
+        console.error(err);
+      });
+    }
+  </script>
 </body>
 </html>
