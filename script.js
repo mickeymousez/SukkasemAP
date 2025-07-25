@@ -46,7 +46,7 @@ function submitToSheet() {
 
   data.total = data.rent + data.parking + data.elecTotal + data.waterTotal;
 
-  fetch("https://script.google.com/macros/s/AKfycby512z47ILyu-AiJ41PUtZ0K7UDnovTS6TrXWOnYjuUABDwqGUDPu5_Nd4-RNXhxe6SnQ/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbx30nGpeZKd9Hq7Ck3LcCJ2olpkP48SQyueNMn4i2JM5-Ivvrcf38Tlbe9ytWG27Lg1Uw/exec", {
     method: "POST",
     body: JSON.stringify(data),
     headers: {
